@@ -34,7 +34,7 @@ class ProfileController extends Controller
             'headline' => 'nullable|string|max:255',
             'company' => 'nullable|string|max:255',
             'job_title' => 'nullable|string|max:255',
-            'graduation_year' => 'nullable|string|max:4',
+            'batch_year' => 'nullable|string|max:4',
             'major' => 'nullable|string|max:255',
             'bio' => 'nullable|string',
             'linkedin_url' => 'nullable|url',

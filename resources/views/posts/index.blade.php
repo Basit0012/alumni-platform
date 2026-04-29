@@ -13,7 +13,7 @@
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
                 <form action="/posts" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <textarea name="content" rows="3" class="w-full border-0 focus:ring-0 text-lg resize-none placeholder-gray-400 bg-transparent" placeholder="What's on your mind, {{ auth()->user()->name }}?" required></textarea>
+                    <textarea name="body" rows="3" class="w-full border-0 focus:ring-0 text-lg resize-none placeholder-gray-400 bg-transparent" placeholder="What's on your mind, {{ auth()->user()->name }}?" required></textarea>
                     
                     <div class="mt-4 flex justify-between items-center border-t border-gray-100 pt-4">
                         <input type="file" name="image" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all cursor-pointer"/>
@@ -46,7 +46,7 @@
                         @endif
                     </div>
                     
-                    <p class="text-gray-800 text-lg mb-6 leading-relaxed">{{ $post->content }}</p>
+                    <p class="text-gray-800 text-lg mb-6 leading-relaxed">{{ $post->body }}</p>
                     
                     @if($post->image)
                         <div class="rounded-2xl overflow-hidden mb-6 ring-1 ring-gray-100 shadow-sm">

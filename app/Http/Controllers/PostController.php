@@ -20,7 +20,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'content' => 'required|string',
+            'body' => 'required|string',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -58,12 +58,12 @@ class PostController extends Controller
     public function comment(Request $request, Post $post)
     {
         $request->validate([
-            'content' => 'required|string|max:500',
+            'body' => 'required|string|max:500',
         ]);
 
         $post->comments()->create([
             'user_id' => Auth::id(),
-            'content' => $request->content,
+            'body' => $request->body,
         ]);
 
         return back()->with('status', 'Comment added!');

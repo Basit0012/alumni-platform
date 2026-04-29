@@ -15,7 +15,7 @@ class Profile extends Model
         'headline',
         'company',
         'job_title',
-        'graduation_year',
+        'batch_year',
         'major',
         'bio',
         'linkedin_url',

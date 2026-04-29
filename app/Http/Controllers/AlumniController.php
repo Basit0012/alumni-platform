@@ -17,19 +17,19 @@ class AlumniController extends Controller
 
         if ($request->has('batch') && $request->batch != '') {
             $query->whereHas('profile', function($q) use ($request) {
-                $q->where('graduation_year', $request->batch);
+                $q->where('batch_year', $request->batch);
             });
         }
 
         $alumni = $query->paginate(12);
         
         // Get unique batches for the filter dropdown
-        $batches = \App\Models\Profile::whereNotNull('graduation_year')
+        $batches = \App\Models\Profile::whereNotNull('batch_year')
                     ->whereHas('user', function($q) {
                         $q->where('role', 'alumni');
                     })
                     ->distinct()
-                    ->pluck('graduation_year')
+                    ->pluck('batch_year')
                     ->sort()
                     ->reverse();
 

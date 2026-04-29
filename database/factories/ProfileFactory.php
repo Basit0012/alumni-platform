@@ -23,7 +23,7 @@ class ProfileFactory extends Factory
             'headline' => fake()->sentence(6),
             'company' => fake()->company(),
             'job_title' => fake()->jobTitle(),
-            'graduation_year' => fake()->numberBetween(2010, 2024),
+            'batch_year' => fake()->numberBetween(2010, 2024),
             'major' => fake()->randomElement(['Computer Science', 'Information Technology', 'Software Engineering', 'Business Administration']),
             'bio' => fake()->paragraph(),
             'linkedin_url' => 'https://linkedin.com/in/' . fake()->userName(),
