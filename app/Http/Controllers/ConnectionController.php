@@ -9,15 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class ConnectionController extends Controller
 {
-    public function store(Request $request, User $receiver)
+    public function send(Request $request, User $user)
     {
-        if (Auth::id() === $receiver->id) {
+        if (Auth::id() === $user->id) {
             return back()->with('error', 'You cannot connect with yourself.');
         }
 
         Connection::firstOrCreate([
             'requester_id' => Auth::id(),
-            'receiver_id' => $receiver->id,
+            'receiver_id' => $user->id,
         ]);
 
         return back()->with('status', 'Connection request sent!');
@@ -36,7 +36,7 @@ class ConnectionController extends Controller
     {
         abort_if($connection->receiver_id !== Auth::id(), 403);
 
-        $connection->update(['status' => 'rejected']);
+        $connection->delete();
 
         return back()->with('status', 'Connection rejected!');
     }

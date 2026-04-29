@@ -9,31 +9,30 @@ class AlumniController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with('profile')->where('role', 'alumni');
+        $query = User::where('role', 'alumni')->with('profile');
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('profile', function ($pq) use ($search) {
-                      $pq->where('major', 'like', "%{$search}%")
-                         ->orWhere('company', 'like', "%{$search}%")
-                         ->orWhere('job_title', 'like', "%{$search}%");
-                  });
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('batch') && $request->batch != '') {
+            $query->whereHas('profile', function($q) use ($request) {
+                $q->where('graduation_year', $request->batch);
             });
         }
 
         $alumni = $query->paginate(12);
-
-        return view('alumni.index', compact('alumni'));
-    }
-
-    public function show(User $alumnus)
-    {
-        abort_if($alumnus->role !== 'alumni', 404);
         
-        $alumnus->load(['profile', 'posts']);
-        
-        return view('alumni.show', compact('alumnus'));
+        // Get unique batches for the filter dropdown
+        $batches = \App\Models\Profile::whereNotNull('graduation_year')
+                    ->whereHas('user', function($q) {
+                        $q->where('role', 'alumni');
+                    })
+                    ->distinct()
+                    ->pluck('graduation_year')
+                    ->sort()
+                    ->reverse();
+
+        return view('alumni.index', compact('alumni', 'batches'));
     }
 }

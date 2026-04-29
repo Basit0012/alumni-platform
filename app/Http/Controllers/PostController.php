@@ -54,4 +54,18 @@ class PostController extends Controller
 
         return back();
     }
+
+    public function comment(Request $request, Post $post)
+    {
+        $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+
+        $post->comments()->create([
+            'user_id' => Auth::id(),
+            'content' => $request->content,
+        ]);
+
+        return back()->with('status', 'Comment added!');
+    }
 }

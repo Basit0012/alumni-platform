@@ -13,11 +13,9 @@ return new class extends Migration
             $table->foreignId('organizer_id')->constrained('users')->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
+            $table->string('location');
             $table->dateTime('event_date');
-            $table->string('location')->nullable();
-            $table->boolean('is_online')->default(false);
-            $table->string('meeting_link')->nullable();
-            $table->string('cover_image')->nullable();
+            $table->integer('max_seats')->nullable();
             $table->timestamps();
         });
     }

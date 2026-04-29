@@ -6,56 +6,39 @@ use App\Models\Mentorship;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 
 class MentorshipController extends Controller
 {
-    public function requestMentorship(Request $request, User $mentor)
+    public function request(Request $request, User $alumni)
     {
-        abort_if($mentor->role !== 'alumni', 403, 'You can only request mentorship from alumni.');
-        abort_if(Auth::id() === $mentor->id, 403, 'You cannot mentor yourself.');
+        // Ensure the target is actually an alumni
+        if ($alumni->role !== 'alumni') {
+            return back()->with('error', 'You can only request mentorship from alumni.');
+        }
 
-        $validated = $request->validate([
-            'goals' => 'required|string|max:1000',
-        ]);
+        // Prevent self-mentorship
+        if (Auth::id() === $alumni->id) {
+            return back()->with('error', 'You cannot mentor yourself.');
+        }
 
-        $mentorship = Mentorship::create([
-            'mentor_id' => $mentor->id,
+        Mentorship::firstOrCreate([
             'mentee_id' => Auth::id(),
+            'mentor_id' => $alumni->id,
+        ], [
             'status' => 'pending',
-            'goals' => $validated['goals'],
+            'request_message' => $request->input('message', 'I would love to be mentored by you!'),
         ]);
-
-        // Email Notification to Mentor
-        Mail::raw("You have a new mentorship request from " . Auth::user()->name . ".\n\nGoals: " . $validated['goals'], function ($message) use ($mentor) {
-            $message->to($mentor->email)
-                    ->subject('New Mentorship Request - Alumni Platform');
-        });
 
         return back()->with('status', 'Mentorship request sent successfully!');
     }
 
     public function approve(Mentorship $mentorship)
     {
+        // Only the designated mentor can approve
         abort_if($mentorship->mentor_id !== Auth::id(), 403);
 
         $mentorship->update(['status' => 'active']);
 
-        // Email Notification to Mentee
-        Mail::raw("Great news! Your mentorship request has been approved by " . Auth::user()->name . ".", function ($message) use ($mentorship) {
-            $message->to($mentorship->mentee->email)
-                    ->subject('Mentorship Request Approved - Alumni Platform');
-        });
-
-        return back()->with('status', 'Mentorship request approved.');
-    }
-
-    public function reject(Mentorship $mentorship)
-    {
-        abort_if($mentorship->mentor_id !== Auth::id(), 403);
-
-        $mentorship->update(['status' => 'rejected']);
-
-        return back()->with('status', 'Mentorship request rejected.');
+        return back()->with('status', 'Mentorship approved!');
     }
 }
